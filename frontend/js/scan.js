@@ -1,3 +1,4 @@
+```javascript
 const params = new URLSearchParams(location.search);
 const bag = params.get("bag") || "carry_on";
 
@@ -11,60 +12,137 @@ const addBtn = document.getElementById("add-btn");
 let selectedFile = null;
 let detected = [];
 
-// Shrink the photo to about 1024 px wide so uploads are fast.
 function resizeImage(file, maxWidth = 1024) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
     img.onload = () => {
-      const scale = Math.min(1, maxWidth / img.width);
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.85);
+      try {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement("canvas");
+
+        canvas.width = Math.max(1, Math.round(img.width * scale));
+        canvas.height = Math.max(1, Math.round(img.height * scale));
+
+        const context = canvas.getContext("2d");
+        if (!context) {
+          throw new Error("Could not process the image.");
+        }
+
+        context.drawImage(
+          img, 0, 0, canvas.width, canvas.height
+        );
+
+        canvas.toBlob((blob) => {
+          URL.revokeObjectURL(objectUrl);
+
+          if (!blob) {
+            reject(new Error("Could not resize the image."));
+            return;
+          }
+
+          resolve(blob);
+        }, "image/jpeg", 0.85);
+      } catch (error) {
+        URL.revokeObjectURL(objectUrl);
+        reject(error);
+      }
     };
-    img.src = URL.createObjectURL(file);
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Could not load the selected image."));
+    };
+
+    img.src = objectUrl;
   });
 }
 
 photoInput.addEventListener("change", () => {
-  selectedFile = photoInput.files[0];
-  if (!selectedFile) return;
+  selectedFile = photoInput.files?.[0] || null;
+
+  if (!selectedFile) {
+    scanBtn.disabled = true;
+    preview.style.display = "none";
+    return;
+  }
+
   preview.src = URL.createObjectURL(selectedFile);
   preview.style.display = "block";
   scanBtn.disabled = false;
+  statusEl.textContent = "";
 });
 
 scanBtn.addEventListener("click", async () => {
+  if (!selectedFile) {
+    statusEl.textContent = "Please select an image first.";
+    return;
+  }
+
   scanBtn.disabled = true;
   statusEl.textContent = "Scanning...";
+
   try {
+    console.log("Scan button clicked");
+
     const small = await resizeImage(selectedFile);
+
+    console.log("Sending image to backend...");
+
     const result = await scanImage(small, bag);
+
+    if (!result || !Array.isArray(result.detected)) {
+      throw new Error("The server response did not contain a detected list.");
+    }
+
     detected = result.detected;
     renderDetected();
-    statusEl.textContent = detected.length ? "" : "No items found. Try a clearer photo.";
-  } catch (err) {
-    statusEl.textContent = "Scan failed: " + err.message;
+
+    statusEl.textContent = detected.length
+      ? `Found ${detected.length} item(s).`
+      : "No items found. Try a clearer photo.";
+  } catch (error) {
+    console.error("Scan failed:", error);
+    statusEl.textContent = "Scan failed: " + error.message;
+  } finally {
+    scanBtn.disabled = false;
   }
-  scanBtn.disabled = false;
 });
 
 function renderDetected() {
-  detectedEl.innerHTML = "";
-  detected.forEach((item, i) => {
+  detectedEl.replaceChildren();
+
+  detected.forEach((item, index) => {
     const li = document.createElement("li");
-    li.textContent = item.name + " ";
-    const trash = document.createElement("button");
-    trash.textContent = "Remove";
-    trash.onclick = () => { detected.splice(i, 1); renderDetected(); };
-    li.appendChild(trash);
+    li.appendChild(document.createTextNode(item.name + " "));
+
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "Remove";
+
+    removeBtn.addEventListener("click", () => {
+      detected.splice(index, 1);
+      renderDetected();
+    });
+
+    li.appendChild(removeBtn);
     detectedEl.appendChild(li);
   });
+
   addBtn.style.display = detected.length ? "inline-block" : "none";
 }
 
 addBtn.addEventListener("click", async () => {
-  await saveItems(bag, detected);
-  location.href = "index.html";
+  addBtn.disabled = true;
+  statusEl.textContent = "Saving items...";
+
+  try {
+    await saveItems(bag, detected);
+    location.href = "index.html";
+  } catch (error) {
+    console.error("Save failed:", error);
+    statusEl.textContent = "Save failed: " + error.message;
+    addBtn.disabled = false;
+  }
 });
+```

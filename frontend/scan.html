@@ -4,19 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Scan items</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <h1>Scan items</h1>
+  <div class="app">
+    <header class="top">
+      <a class="back" href="index.html" aria-label="Back to list">&#8592;</a>
+      <div class="titles">
+        <h1>Scan items</h1>
+        <p>Take a photo of what you're packing</p>
+      </div>
+    </header>
 
-  <input type="file" id="photo" accept="image/*" capture="environment">
-  <img id="preview" alt="" style="max-width:100%; display:none;">
-  <button id="scan-btn" disabled>Scan</button>
-  <p id="status"></p>
+    <main>
+      <section class="card photo-box">
+        <input type="file" id="photo" class="sr-only" accept="image/*" capture="environment">
+        <label for="photo" class="btn accent wide">Take or choose a photo</label>
+        <img id="preview" alt="Preview of your photo" style="max-width:100%; display:none;">
+      </section>
 
-  <ul id="detected"></ul>
-  <button id="add-btn" style="display:none;">Add to list</button>
-  <a href="index.html">Back to list</a>
+      <button class="btn primary wide" id="scan-btn" disabled>Scan</button>
+      <p id="status" class="hint"></p>
+
+      <ul id="detected"></ul>
+    </main>
+  </div>
+
+  <div class="dock">
+    <button class="btn accent" id="add-btn" style="display:none;">Add to list</button>
+  </div>
 
   <script src="js/api.js"></script>
   <script src="js/scan.js"></script>
