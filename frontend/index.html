@@ -4,38 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Fly Ready</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="app">
-    <header class="top">
-      <div class="mascot" aria-hidden="true">
-        <svg viewBox="0 0 64 40">
-          <path d="M27 20 L15 3 L26 3 L41 19Z" fill="#9ed8f0" stroke="#23272f" stroke-width="2.5" stroke-linejoin="round"/>
-          <path d="M12 19 L5 8 L13 8 L19 18Z" fill="#1aa7b5" stroke="#23272f" stroke-width="2.5" stroke-linejoin="round"/>
-          <ellipse cx="33" cy="23" rx="25" ry="9.5" fill="#fff" stroke="#23272f" stroke-width="2.5"/>
-          <circle cx="39" cy="22" r="2.8" fill="#1aa7b5"/><circle cx="47" cy="22" r="2.8" fill="#1aa7b5"/>
-          <path d="M53 26 q4 -1 5 -5" fill="none" stroke="#ff9f43" stroke-width="3" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <div class="titles">
-        <h1>Fly Ready</h1>
-        <p>Pack smart. Fly ready.</p>
-      </div>
-    </header>
-
-    <main>
-      <section class="card empty">
-        <p>Nothing packed yet. Tap Add Items!</p>
-      </section>
-    </main>
+    <header class="top" id="top"></header>
+    <main id="trips" aria-live="polite"></main>
   </div>
 
   <div class="dock">
-    <a class="btn accent" href="scan.html?bag=carry_on">Add Items</a>
+    <button class="btn accent" id="add-trip" type="button">Add new travel</button>
   </div>
 
+  <script src="js/common.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/trips.js"></script>
+  <script src="js/home.js"></script>
 </body>
 </html>
