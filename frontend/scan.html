@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scan items</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <h1>Scan items</h1>
+
+  <input type="file" id="photo" accept="image/*" capture="environment">
+  <img id="preview" alt="" style="max-width:100%; display:none;">
+  <button id="scan-btn" disabled>Scan</button>
+  <p id="status"></p>
+
+  <ul id="detected"></ul>
+  <button id="add-btn" style="display:none;">Add to list</button>
+  <a href="index.html">Back to list</a>
+
+  <script src="js/api.js"></script>
+  <script src="js/scan.js"></script>
+</body>
+</html>
