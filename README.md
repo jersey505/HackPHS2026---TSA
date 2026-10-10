@@ -1,24 +1,21 @@
-# Flight Check ✈️
+app: fly ready
 
-Pack smarter before you fly. Flight Check uses Gemini to identify the items
-you photograph, flags anything the TSA restricts, and reminds you if you
-forgot a charger or cable.
+description
+it uses Gemini to identify items in photos you can upload that also tells you what is not tsa approved. 
 
-## Features
-- Scan items with your camera and add them to a packing list
-- TSA warnings for restricted or prohibited items
-- Carry-on vs. suitcase tracking
-- Missing cable and charger detection
+funtinality
+camara function to scan items
+tsa warning
+carry on and suitcase tracking
+missing items in bag detector
 
-## Team
-- Frontend: (name)
-- Backend (Gemini + TSA): (name)
-- Backend (data + cables): (name)
+team
+frontend - jeresy
+backend - maxim
+backend ai - jesse
 
-## Setup
-1. Clone the repo
-2. Copy `.env.example` to `.env` and add your Gemini API key
-3. `pip install -r requirements.txt`
-4. `python main.py`
-
-Built for HackPHS 2026.
+setup
+add ai api key
+1. py -m pip install -r requirements.txt
+2. py app.py
+3. go to http://127.0.0.1:5000/index.html
