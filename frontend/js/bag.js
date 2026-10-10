@@ -1,3 +1,5 @@
+// bag page: shows one bag's items, lets you change or remove them, manages reminders, and runs the final check
+
 (function () {
   const first = getTrip(qs("trip")) || listTrips()[0];
   if (!first) { location.replace("index.html"); return; }
@@ -10,7 +12,7 @@
   const remEl = document.getElementById("reminders");
   const toggleEl = document.getElementById("toggle");
   document.getElementById("done-btn").addEventListener("click", runDone);
-
+  // draws the whole page: header, scan link, bag toggle, reminders and items
   renderAll();
 
   async function renderAll() {
@@ -23,7 +25,8 @@
     renderReminders();
     await loadItems();
   }
-
+  
+  // loads this trip's items from the server and keeps only the ones in this bag
   async function loadItems() {
     try {
       const all = await getItems(bag);
@@ -50,7 +53,8 @@
       }, BAG_LABEL[b]));
     });
   }
-
+  
+  // item list: one row per item with its icon, name, quantity buttons and warning icon
   function renderItems() {
     itemsEl.innerHTML = "";
     if (!items.length) {
@@ -83,6 +87,7 @@
     });
   }
 
+  // item actions: change the quantity (asks before removing at zero) and delete an item
   async function changeQty(item, delta) {
     const next = (item.quantity || 1) + delta;
     if (next < 1) {
@@ -105,7 +110,8 @@
       await loadItems();
     } catch (e) { toast(e.message, "error"); }
   }
-
+  
+  // popup shown when you tap a warning icon: explains the problem, lets you remove or bypass
   function openStatus(item) {
     const trip = getTrip(tripId);
     const bypassed = trip.bypassed[item.id];
@@ -124,6 +130,7 @@
     showDialog({ title: prohibited ? "Not allowed by TSA" : "Warning", body: text, buttons });
   }
 
+  // reminders: checklist you can tick, edit, delete, and add to
   function renderReminders() {
     const trip = getTrip(tripId);
     remEl.innerHTML = "";
@@ -191,7 +198,7 @@
     }
     btn.disabled = false;
   }
-
+// result popup: "all set" if clean, otherwise lists what is missing, banned or unchecked
   function showResult(missing, banned, open) {
     const body = el("div", {});
     const clean = !missing.length && !banned.length;
