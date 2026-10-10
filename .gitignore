@@ -1,0 +1,13 @@
+
+venv/
+.venv/
+kivy_env/
+
+__pycache__/
+*.pyc
+
+.env
+
+node_modules/
+
+.vscode/
