@@ -1,3 +1,5 @@
+// saves trips and reminders in the browser (localStorage) and has helpers to read and change them
+
 const TRIPS_KEY = "flyready_trips";
 const DEFAULTS_KEY = "flyready_default_reminders";
 const SEEDED_KEY = "flyready_seeded";
@@ -11,7 +13,7 @@ function writeJSON(key, value) {
 }
 function uid(prefix) { return (prefix || "id") + "_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
-
+// default reminders: the list every new trip starts with
 function getDefaultReminders() {
   const d = readJSON(DEFAULTS_KEY, null);
   return Array.isArray(d) ? d : FALLBACK_REMINDERS.slice();
@@ -19,7 +21,7 @@ function getDefaultReminders() {
 function setDefaultReminders(list) {
   writeJSON(DEFAULTS_KEY, list.map((s) => String(s).trim()).filter(Boolean));
 }
-
+// trip structure: builds a bag, fills in missing fields, and reads/saves/finds trips
 function makeBag(reminders) {
   return { itemIds: [], reminders: reminders.map((t) => ({ id: uid("r"), text: t, done: false })) };
 }
@@ -36,7 +38,7 @@ function normalizeTrip(t) {
 function listTrips() { return readJSON(TRIPS_KEY, []).map(normalizeTrip); }
 function saveTrips(trips) { writeJSON(TRIPS_KEY, trips); }
 function getTrip(id) { return listTrips().find((t) => t.id === id) || null; }
-
+// create and delete trips, and make one starter trip the very first time the app opens
 function addTrip(opts) {
   const reminders = opts.reminders || getDefaultReminders();
   const trip = {
@@ -63,7 +65,7 @@ function ensureDefaultTrip() {
   writeJSON(SEEDED_KEY, true);
 }
 
-
+// item links: a trip only remembers item ids
 function mutateTrip(id, fn) {
   const trips = listTrips();
   const trip = trips.find((t) => t.id === id);
