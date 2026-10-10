@@ -1,8 +1,9 @@
 // Set to false once the backend endpoints are live.
-const USE_MOCK = true;
+const USE_MOCK = false;
+const API = "http://127.0.0.1:5000";
 
 async function request(url, options) {
-  const res = await fetch(url, options);
+  const res = await fetch(API + url, options);
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || "Request failed");
   return data;
