@@ -1,5 +1,4 @@
-scan.js
-URL: scan.html?trip=ID&bag=carry_on|suitcase
+
 
 (function () {
 const trip = getTrip(qs("trip")) || listTrips()[0];
