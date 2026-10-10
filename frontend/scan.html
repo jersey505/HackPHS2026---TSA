@@ -4,38 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Scan items</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-</head>
+  </head>
 <body>
   <div class="app">
-    <header class="top">
-      <a class="back" href="index.html" aria-label="Back to list">&#8592;</a>
-      <div class="titles">
-        <h1>Scan items</h1>
-        <p>Take a photo of what you're packing</p>
-      </div>
-    </header>
-
+    <header class="top" id="top"></header>
     <main>
       <section class="card photo-box">
+      
         <input type="file" id="photo" class="sr-only" accept="image/*" capture="environment">
         <label for="photo" class="btn accent wide">Take or choose a photo</label>
-        <img id="preview" alt="Preview of your photo" style="max-width:100%; display:none;">
+        <img id="preview" class="preview" alt="Preview of the photo you picked" hidden>
       </section>
-
-      <button class="btn primary wide" id="scan-btn" disabled>Scan</button>
-      <p id="status" class="hint"></p>
-
-      <ul id="detected"></ul>
+      <button class="btn primary wide" id="scan-btn" type="button" disabled>Scan</button>
+      <p id="status" class="hint" role="status"></p>
+      <section id="detected" aria-live="polite"></section>
     </main>
   </div>
 
-  <div class="dock">
-    <button class="btn accent" id="add-btn" style="display:none;">Add to list</button>
+   <div class="dock">
+    <button class="btn accent" id="add-btn" type="button" disabled>Add to bag</button>
   </div>
 
+  <script src="js/common.js"></script>
   <script src="js/api.js"></script>
+  <script src="js/trips.js"></script>
   <script src="js/scan.js"></script>
 </body>
 </html>
