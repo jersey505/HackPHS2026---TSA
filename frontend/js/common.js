@@ -1,3 +1,5 @@
+// shared helpers used by every page: building elements, icons, header, toasts and popups
+
 const APP_NAME = "Fly Ready";
 
 function el(tag, attrs, ...kids) {
@@ -16,6 +18,7 @@ function el(tag, attrs, ...kids) {
   return n;
 }
 
+// small utilities: read a url parameter, clean up text for comparing, and format dates
 function qs(name) { return new URLSearchParams(location.search).get(name); }
 function norm(s) { return String(s || "").toLowerCase().trim(); }
 
@@ -26,6 +29,7 @@ function formatDate(iso) {
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 }
 
+// icons: button icons, the warning/prohibited signs, and an emoji for each item category
 const ICON_PATHS = {
   trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
@@ -54,7 +58,7 @@ const CATEGORY_ICON = {
   sharp: "✂️", weapon: "⛔", other: "\u{1F392}",
 };
 function categoryIcon(cat) { return CATEGORY_ICON[cat] || CATEGORY_ICON.other; }
-
+//airplane mascot drawing
 const MASCOT_SVG =
   '<svg viewBox="0 0 64 40" aria-hidden="true">' +
   '<path d="M27 20 L15 3 L26 3 L41 19Z" fill="#9ed8f0" stroke="#23272f" stroke-width="2.5" stroke-linejoin="round"/>' +
@@ -63,7 +67,7 @@ const MASCOT_SVG =
   '<circle cx="39" cy="22" r="2.8" fill="#1aa7b5"/><circle cx="47" cy="22" r="2.8" fill="#1aa7b5"/>' +
   '<path d="M53 26 q4 -1 5 -5" fill="none" stroke="#ff9f43" stroke-width="3" stroke-linecap="round"/>' +
   "</svg>";
-
+// page header (back button, mascot, title) and the small message that pops up and fades away
 function renderHeader(host, opts) {
   opts = opts || {};
   document.title = (opts.title ? opts.title + " - " : "") + APP_NAME;
@@ -80,7 +84,7 @@ function toast(msg, kind) {
   box.append(t);
   setTimeout(() => t.remove(), 4200);
 }
-
+// popups: a general dialog with custom buttons, and a simple yes/no confirm built on top of it
 function showDialog(opts) {
   const dlg = el("dialog", { class: "dlg", "aria-labelledby": "dlg-title" });
   const row = el("div", { class: "dlg-actions" });

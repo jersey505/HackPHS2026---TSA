@@ -1,3 +1,4 @@
+/* base styles for the pages: colors, header, buttons, cards, scan list and bottom dock */
 :root {
   --sky-100: #e8f6fd;
   --sky-300: #b5e3f6;
@@ -15,7 +16,7 @@
 }
 
 * { box-sizing: border-box; }
-
+/* page background */
 body {
   margin: 0;
   min-height: 100vh;
@@ -23,11 +24,10 @@ body {
   color: var(--ink);
   background: linear-gradient(180deg, var(--sky-300) 0, var(--sky-100) 280px, #f7fcff 100%) fixed;
 }
-
+/* page layout */
 h1, h2, p { margin: 0; }
 .app { max-width: 480px; margin: 0 auto; padding: 0 16px 120px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
-
 /* header */
 .top { display: flex; align-items: center; gap: 12px; padding: 22px 0 14px; }
 .top h1 { font-size: 1.7rem; font-weight: 800; line-height: 1.1; }
@@ -40,9 +40,10 @@ h1, h2, p { margin: 0; }
   background: var(--white); box-shadow: var(--shadow-sm);
   font-size: 1.4rem; text-decoration: none; color: var(--ink);
 }
+/* makes the mascot go up and down */
 @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-6px) rotate(2deg); } }
 
-
+/* buttons */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 48px; padding: 0 22px; border-radius: 999px; border: 2px solid transparent;
@@ -51,6 +52,7 @@ h1, h2, p { margin: 0; }
 }
 .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 .btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+/* button collors */
 .btn.primary { background: var(--ink); color: var(--white); }
 .btn.accent { background: var(--orange-500); color: var(--ink); }
 .btn.wide { width: 100%; }
@@ -65,7 +67,7 @@ h1, h2, p { margin: 0; }
 #scan-btn { margin-bottom: 4px; }
 .hint { color: var(--ink-soft); font-weight: 700; text-align: center; margin: 10px 0; min-height: 1.2em; }
 
-
+/* list of items the ai found after a scan */
 #detected { list-style: none; margin: 0; padding: 0; }
 #detected li {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;

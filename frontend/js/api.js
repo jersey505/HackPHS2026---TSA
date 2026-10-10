@@ -1,8 +1,10 @@
+
 const USE_MOCK = false;
 const API = "";
 const MOCK_ITEMS_KEY = "flyready_mock_items";
 const MOCK_SCAN_KEY = "flyready_mock_scan_n";
 
+// sends requests to the server and returns the json, with friendly errors 
 async function request(url, options) {
   let res;
   try {
@@ -21,7 +23,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function mockLoad() {
   try { return JSON.parse(localStorage.getItem(MOCK_ITEMS_KEY) || "[]"); } catch (e) { return []; }
 }
-
+// fake storage and fake data, only used when use_mock is true
 function mockSave(items) {
   try { localStorage.setItem(MOCK_ITEMS_KEY, JSON.stringify(items)); } catch (e) { /* ignore */ }
 }
@@ -51,6 +53,7 @@ const MOCK_SCANS = [
   ],
 ];
 
+// fake charger check: finds items whose charger is not packed
 const CABLE_MESSAGES = {
   usb_c: "a USB-C cable", lightning: "a Lightning cable", micro_usb: "a micro-USB cable",
   magsafe: "a MagSafe charger", laptop_brick: "its laptop charger", proprietary: "its own charger",
@@ -67,7 +70,7 @@ function mockCableCheck(items) {
   });
   return { ok: missing.length === 0, missing };
 }
-
+// functions the pages call: get, delete and change items
 async function getItems(bag) {
   if (USE_MOCK) {
     const items = mockLoad();
@@ -98,6 +101,7 @@ async function updateQuantity(id, quantity) {
   });
 }
 
+// functions the pages call: scan a photo, save the items, and run the final check
 async function scanImage(file, bag) {
   if (USE_MOCK) {
     await sleep(900);

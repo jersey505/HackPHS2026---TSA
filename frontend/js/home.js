@@ -1,3 +1,5 @@
+// home page: lists your trips, shows how many items are in each bag, and lets you add or delete trips
+
 (function () {
   renderHeader(document.getElementById("top"), { subtitle: "Pack smart. Fly ready." });
   ensureDefaultTrip();
@@ -19,7 +21,7 @@
     }
     trips.forEach((t, i) => host.append(tripCard(t, i, items)));
   }
-
+  // bag buttons: counts the items in a bag and shows a badge when something needs attention
 function bagInfo(trip, bag, items) {
     const ids = new Set(trip.bags[bag].itemIds);
     const mine = items.filter((i) => ids.has(i.id));
@@ -41,7 +43,8 @@ function bagInfo(trip, bag, items) {
       el("span", { class: "bag-count" }, info.count + (info.count === 1 ? " item" : " items")),
       badge);
   }
-
+    // trip card picture with color changes
+  
  function tripScene(i) {
     const skies = ["#b5e3f6", "#c9ecd9", "#ffe0b8"];
     const accents = ["#1aa7b5", "#2ea66b", "#ff9f43"];
@@ -61,8 +64,8 @@ function bagInfo(trip, bag, items) {
       '<path d="M14 12v40M38 12v40" stroke="#23272f" stroke-opacity=".35" stroke-width="3"/></g>' +
       '<path d="M0 108 Q100 94 200 106 T400 100 V120 H0Z" fill="#fff" fill-opacity=".6"/></svg>' });
   }
-
-  function tripCard(trip, i, items) {
+  // creates trip card that includes picture, name, date, delete button and the two bag buttons
+   function tripCard(trip, i, items) {
     const trash = el("button", {
       class: "icon-btn", type: "button", "aria-label": "Delete trip " + trip.name,
       onclick: () => deleteTripFlow(trip),
@@ -78,7 +81,7 @@ function bagInfo(trip, bag, items) {
         bagButton(trip, "carry_on", "Carry-on", items),
         bagButton(trip, "suitcase", "Suitcase", items)));
   }
-
+  // delete a trip: asks first, then removes the trip and its items from the server
    async function deleteTripFlow(trip) {
     const ok = await confirmDialog("Delete this trip?",
       "\"" + trip.name + "\" and everything packed in it will be removed.", "Delete", true);
@@ -91,7 +94,7 @@ function bagInfo(trip, bag, items) {
     toast("Trip deleted", "good");
     render();
   }
-
+  // add new trip popup: name, date and an editable list of reminders
 function openAddTrip()  {
     let reminders = getDefaultReminders();
     const nameInput = el("input", { type: "text", id: "trip-name", placeholder: "Trip name", maxlength: "40", autocomplete: "off" });
