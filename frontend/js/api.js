@@ -1,7 +1,3 @@
-api.js
-USE_MOCK = true  
-USE_MOCK = false
-
 const USE_MOCK = false;
 const API = "";
 const MOCK_ITEMS_KEY = "flyready_mock_items";
