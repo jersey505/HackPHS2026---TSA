@@ -1,19 +1,13 @@
 ```javascript
 const USE_MOCK = false;
-const API = "http://172.16.240.112:5000";
+const API = "http://172.16.240.112:5000/";
 
 async function request(url, options = {}) {
-  const response = await fetch(`${API}${url}`, options);
+  const res = await fetch(${API}${url}, options);
+  const data = await res.json();
 
-  let data;
-  try {
-    data = await response.json();
-  } catch {
-    throw new Error(`Server returned invalid JSON (HTTP ${response.status})`);
-  }
-
-  if (!response.ok) {
-    throw new Error(data.error || `Request failed (${response.status})`);
+  if (!res.ok) {
+    throw new Error(data.error || "Request failed");
   }
 
   return data;
