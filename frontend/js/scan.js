@@ -1,83 +1,129 @@
-const params = new URLSearchParams(location.search);
-const bag = params.get("bag") || "carry_on";
+scan.js
+URL: scan.html?trip=ID&bag=carry_on|suitcase
+
+(function () {
+const trip = getTrip(qs("trip")) || listTrips()[0];
+if (!trip) { location.replace("index.html"); return; }
+const tripId = trip.id;
+const bag = qs("bag") === "suitcase" ? "suitcase" : "carry_on";
+const BAG_LABEL = bag === "suitcase" ? "Suitcase" : "Carry-on";
+const backUrl = "bag.html?trip=" + encodeURIComponent(tripId) + "&bag=" + bag;
+renderHeader(document.getElementById("top"), { title: "Scan", subtitle: trip.name + " - " + BAG_LABEL, back: backUrl });  
 
 const photoInput = document.getElementById("photo");
 const preview = document.getElementById("preview");
 const scanBtn = document.getElementById("scan-btn");
 const statusEl = document.getElementById("status");
-const detectedEl = document.getElementById("detected");
+const listEl = document.getElementById("detected");
 const addBtn = document.getElementById("add-btn");
 
 let selectedFile = null;
-let detected = [];
-
-// Shrink the photo to about 1024 px wide so uploads are fast.
-function resizeImage(file, maxWidth = 1024) {
+  let detected = [];
+  const RANK = { prohibited: 0, warning: 1, allowed: 2 };
+  function resizeImage(file, maxWidth) {
+  maxWidth = maxWidth || 1024;
   return new Promise((resolve) => {
     const img = new Image();
-    img.onload = () => {
-      const scale = Math.min(1, maxWidth / img.width);
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width * scale;
-      canvas.height = img.height * scale;
-      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob((blob) => resolve(blob || file), "image/jpeg", 0.85);
-    };
-    img.onerror = () => resolve(file);
-    img.src = URL.createObjectURL(file);
-  });
-}
-
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => resolve(blob || file), "image/jpeg", 0.85);
+      };
+      img.onerror = () => resolve(file);
+      img.src = URL.createObjectURL(file);
+    });
+  }
 photoInput.addEventListener("change", () => {
-  selectedFile = photoInput.files[0];
-  if (!selectedFile) return;
-  preview.src = URL.createObjectURL(selectedFile);
-  preview.style.display = "block";
-  scanBtn.disabled = false;
-});
+   selectedFile = photoInput.files[0];
+   if (!selectedFile) return;
+   preview.src = URL.createObjectURL(selectedFile);
+   preview.hidden = false;
+   scanBtn.disabled = false;
+   statusEl.textContent = "";
+  });
 
 scanBtn.addEventListener("click", async () => {
-  scanBtn.disabled = true;
-  statusEl.textContent = "Scanning...";
-  try {
-    const small = await resizeImage(selectedFile);
-    const result = await scanImage(small, bag);
-    detected = result.detected || [];
-    renderDetected();
-    statusEl.textContent = detected.length ? "" : "No items found. Try a clearer photo.";
-  } catch (err) {
-    statusEl.textContent = "Scan failed: " + err.message;
-  }
-  scanBtn.disabled = false;
-});
-
-function addable() {
-  return detected.filter((x) => x.tsa_status !== "prohibited");
-}
-
-function renderDetected() {
-  detectedEl.innerHTML = "";
-  detected.forEach((item, i) => {
-    const li = document.createElement("li");
-    let text = item.name;
-    if (item.tsa_status === "prohibited") text += " - NOT ALLOWED by TSA. " + (item.tsa_note || "");
-    else if (item.tsa_status === "warning") text += " - Warning: " + (item.tsa_note || "");
-    li.textContent = text + " ";
-    if (item.tsa_status === "prohibited") li.style.color = "#c0392b";
-    const remove = document.createElement("button");
-    remove.textContent = "Remove";
-    remove.onclick = () => { detected.splice(i, 1); renderDetected(); };
-    li.appendChild(remove);
-    detectedEl.appendChild(li);
+    scanBtn.disabled = true;
+    scanBtn.replaceChildren(el("span", { class: "spinner", "aria-hidden": "true" }), "Scanning...");
+    statusEl.textContent = "";
+    try {
+       const small = await resizeImage(selectedFile);
+      const result = await scanImage(small, bag);
+      detected = (result.detected || []).map((x) => Object.assign({}, x, { _skipped: false }));
+      detected.sort((a, b) => (RANK[a.tsa_status] ?? 2) - (RANK[b.tsa_status] ?? 2)); 
+      statusEl.textContent = detected.length ? "" : "No items found. Try a clearer photo.";
+      renderDetected();
+    } catch (e) {
+      toast(e.message, "error");
+    }
+    scanBtn.textContent = "Scan again";
+    scanBtn.disabled = false;
   });
-  addBtn.style.display = addable().length ? "inline-flex" : "none";
-}
 
-addBtn.addEventListener("click", async () => {
-  try {
-    await saveItems(bag, addable());
-    location.href = "index.html";
-  } catch (err) {
-    statusEl.textContent = "Could not save: " + err.message;
+ function renderDetected() {
+    listEl.innerHTML = "";
+    detected.forEach((item, idx) => {
+      const status = item.tsa_status || "allowed";
+      const buttons = [];
+      buttons.push(el("button", { type: "button", class: "btn ghost small", onclick: () => { detected.splice(idx, 1); renderDetected(); } }, "Remove"));
+      if (status === "warning" && !item._skipped) {
+        buttons.push(el("button", { type: "button", class: "btn primary small", onclick: () => { item._skipped = true; renderDetected(); } }, "Skip"));
+      }
+
+ let chip, note = null;
+      if (status === "prohibited") {
+        chip = el("span", { class: "chip prohibited" }, "Not allowed by TSA");
+        note = el("p", { class: "note" }, item.tsa_note || "TSA does not allow this item. It will not be added.");
+      } else if (status === "warning") {
+        chip = el("span", { class: "chip warning" }, item._skipped ? "Warning skipped" : "Warning");
+        note = el("p", { class: "note" }, item.tsa_note || "This item may not be approved.");
+      } else {
+        chip = el("span", { class: "chip allowed" }, "OK");
+      }
+
+      listEl.append(el("article", { class: "detected " + status },
+        el("div", { class: "tile", "aria-hidden": "true" }, categoryIcon(item.category)),
+        el("div", { class: "body" },
+          el("h3", {}, item.name), chip, note,
+          status !== "allowed" ? el("span", { class: "fine" }, "AI-generated, check tsa.gov") : null,
+          el("div", { class: "row-btns" }, buttons))));
+    });
+    updateAddButton();
   }
-});
+
+  function addable() { return detected.filter((x) => x.tsa_status !== "prohibited"); }
+  function pending() { return detected.filter((x) => x.tsa_status === "warning" && !x._skipped); }
+
+  function updateAddButton() {
+    const n = addable().length;
+    addBtn.textContent = n ? "Add " + n + (n === 1 ? " item" : " items") + " to " + BAG_LABEL.toLowerCase() : "Add to bag";
+    addBtn.disabled = n === 0 || pending().length > 0;
+    if (pending().length) statusEl.textContent = "Skip or remove each warning first.";
+    else if (detected.length) statusEl.textContent = "";
+  }
+
+  addBtn.addEventListener("click", async () => {
+    const toAdd = addable();
+    addBtn.disabled = true;
+    try {
+      const payload = toAdd.map((it) => { const c = Object.assign({}, it); delete c._skipped; return c; });
+      const res = await saveItems(bag, payload);
+      const all = res.items || [];
+      toAdd.forEach((it) => {
+        const match = all.find((x) => x.bag === bag && norm(x.name) === norm(it.name));
+        if (match) {
+          addItemIds(tripId, bag, [match.id]);
+          if (it._skipped) setBypassed(tripId, match.id, true);
+        }
+      });
+      location.href = backUrl;
+    } catch (e) {
+      toast(e.message, "error");
+      updateAddButton();
+    }
+  });
+})();
+      
