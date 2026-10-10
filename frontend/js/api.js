@@ -1,6 +1,6 @@
 // Set to false once the backend endpoints are live.
 const USE_MOCK = false;
-const API = "http://127.0.0.1:5000";
+const API = "http://172.16.240.112:5000/";
 
 async function request(url, options) {
   const res = await fetch(API + url, options);
@@ -31,9 +31,8 @@ async function saveItems(bag, items) {
   if (USE_MOCK) {
     return { items: items };
   }
-  return request("/api/items", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ bag, items }),
-  });
+  return request(${API}/api/scan, {
+  method: "POST",
+  body: form
+});
 }
