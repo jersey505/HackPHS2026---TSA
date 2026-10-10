@@ -1,0 +1,16 @@
+[
+    {
+        
+    "name": "Water bottle",
+    "category": "other",
+    "quantity": 1,
+    "needs_charging": false,
+    "charge_type": "none",
+    "provides_charge": [],
+    "tsa_status": "warning",
+    "tsa_note": "Must be completely empty before passing through airport security checkpoint.",
+    "confidence": 0.98,
+    "bag": "suitcase",
+    "id": "itm_85bfa0fb"
+    }
+]
