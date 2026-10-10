@@ -1,6 +1,6 @@
 ```javascript
 const USE_MOCK = false;
-const API = "http://172.16.240.112:5000/";
+const API = "";
 
 async function request(url, options = {}) {
   const res = await fetch(${API}${url}, options);
