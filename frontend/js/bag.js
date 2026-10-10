@@ -1,7 +1,3 @@
-/* ===========================================================
-   bag.js - one bag (Carry-on or Suitcase) of one trip.
-   URL: bag.html?trip=ID&bag=carry_on|suitcase
-   =========================================================== */
 (function () {
   const first = getTrip(qs("trip")) || listTrips()[0];
   if (!first) { location.replace("index.html"); return; }
@@ -55,7 +51,6 @@
     });
   }
 
-  /* ---------- items ---------- */
   function renderItems() {
     itemsEl.innerHTML = "";
     if (!items.length) {
@@ -111,7 +106,6 @@
     } catch (e) { toast(e.message, "error"); }
   }
 
-  /* Popup for a warning or prohibited item */
   function openStatus(item) {
     const trip = getTrip(tripId);
     const bypassed = trip.bypassed[item.id];
@@ -130,7 +124,6 @@
     showDialog({ title: prohibited ? "Not allowed by TSA" : "Warning", body: text, buttons });
   }
 
-  /* ---------- reminders ---------- */
   function renderReminders() {
     const trip = getTrip(tripId);
     remEl.innerHTML = "";
@@ -178,7 +171,6 @@
     });
   }
 
-  /* ---------- Done: checks BOTH bags ---------- */
   async function runDone() {
     const btn = document.getElementById("done-btn");
     btn.disabled = true;
