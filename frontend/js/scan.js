@@ -1,4 +1,4 @@
-
+// scan page: pick a photo, send it to the ai, review the items it found (warnings first), then add them to the bag
 
 (function () {
 const trip = getTrip(qs("trip")) || listTrips()[0];
@@ -19,6 +19,7 @@ const addBtn = document.getElementById("add-btn");
 let selectedFile = null;
   let detected = [];
   const RANK = { prohibited: 0, warning: 1, allowed: 2 };
+   // shrinks the photo to about 1024px wide so the upload is fast
   function resizeImage(file, maxWidth) {
   maxWidth = maxWidth || 1024;
   return new Promise((resolve) => {
@@ -35,6 +36,7 @@ let selectedFile = null;
       img.src = URL.createObjectURL(file);
     });
   }
+// choosing a photo: shows a preview and turns on the scan button
 photoInput.addEventListener("change", () => {
    selectedFile = photoInput.files[0];
    if (!selectedFile) return;
@@ -43,7 +45,7 @@ photoInput.addEventListener("change", () => {
    scanBtn.disabled = false;
    statusEl.textContent = "";
   });
-
+  // scan button: sends the photo to the backend and sorts the results with warnings first
 scanBtn.addEventListener("click", async () => {
     scanBtn.disabled = true;
     scanBtn.replaceChildren(el("span", { class: "spinner", "aria-hidden": "true" }), "Scanning...");
@@ -95,7 +97,7 @@ scanBtn.addEventListener("click", async () => {
 
   function addable() { return detected.filter((x) => x.tsa_status !== "prohibited"); }
   function pending() { return detected.filter((x) => x.tsa_status === "warning" && !x._skipped); }
-
+  // add button rules
   function updateAddButton() {
     const n = addable().length;
     addBtn.textContent = n ? "Add " + n + (n === 1 ? " item" : " items") + " to " + BAG_LABEL.toLowerCase() : "Add to bag";
@@ -103,7 +105,7 @@ scanBtn.addEventListener("click", async () => {
     if (pending().length) statusEl.textContent = "Skip or remove each warning first.";
     else if (detected.length) statusEl.textContent = "";
   }
-
+    // add button: saves the items, links them to this trip, then goes back to the bag page
   addBtn.addEventListener("click", async () => {
     const toAdd = addable();
     addBtn.disabled = true;
