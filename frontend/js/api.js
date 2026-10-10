@@ -2,12 +2,18 @@
 const USE_MOCK = false;
 const API = "http://172.16.240.112:5000";
 
-async function request(url, options) {
-  const res = await fetch(`${API}${url}`, options);
-  const data = await res.json();
+async function request(url, options = {}) {
+  const response = await fetch(`${API}${url}`, options);
 
-  if (!res.ok) {
-    throw new Error(data.error || "Request failed");
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error(`Server returned invalid JSON (HTTP ${response.status})`);
+  }
+
+  if (!response.ok) {
+    throw new Error(data.error || `Request failed (${response.status})`);
   }
 
   return data;
@@ -18,7 +24,7 @@ async function scanImage(file, bag) {
     return {
       detected: [
         {
-          name: "Shirt",
+          name: "Test Shirt",
           category: "clothing",
           needs_charging: false,
           charge_type: "none",
@@ -43,7 +49,7 @@ async function scanImage(file, bag) {
 
 async function saveItems(bag, items) {
   if (USE_MOCK) {
-    return { items: items };
+    return { items };
   }
 
   return request("/api/items", {
