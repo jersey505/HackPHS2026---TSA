@@ -2,6 +2,21 @@
     "rules": [
         {"keywords": ["firework", "flare", "dynamite", "explosive", "grenade"], "carry_on": "prohibited", "checked": "prohibited", "note": "Explosives and fireworks are not allowed in carry-on or checked bags."},
         {"keywords": ["gun", "pistol", "firearm", "revolver", "rifle"], "carry_on": "prohibited", "checked": "warning", "note": "Firearms are never allowed in carry-ons. Checked bags only if unloaded, locked and declared."},
-        
+        {"keywords": ["ammunition", "bullet"], "carry_on": "prohibited", "checked": "warning", "note": "Ammo is not allowed in carry-ons. Checked bags need special packaging."},
+        {"keywords": ["lighter fluid", "gasoline", "fuel"], "carry_on": "prohibited", "checked": "prohibited", "note": "Flammable fuel is not allowed in any bag."},
+        {"keywords": ["pepper spray", "mace"], "carry_on": "prohibited", "checked": "warning", "note": "Self-defense spray is not allowed in carry-ons. Checked bags: one small container with a safety cap."},
+        {"keywords": ["knife", "box cutter", "razor blade", "machete", "sword", "dagger"], "carry_on": "prohibited", "checked": "allowed", "note": "Knives and blades are not allowed in carry-ons. Pack in your suitcase, sheathed."},
+        {"keywords": ["scissors"], "carry_on": "warning", "checked": "allowed", "note": "Scissors with blades over 4 inches are not allowed in a carry-on."},
+        {"keywords": ["baseball bat", "bat", "golf club", "hockey stick", "crowbar", "hammer", "axe"], "carry_on": "prohibited", "checked": "allowed", "note": "Bats, clubs and heavy tools are not allowed in carry-ons. Pack in your suitcase."},
+        {"keywords": ["screwdriver", "wrench", "pliers", "drill"], "carry_on": "warning", "checked": "allowed", "note": "Tools over 7 inches are not allowed in a carry-on."},
+        {"keywords": ["shampoo", "conditioner", "lotion", "perfume", "cologne", "sunscreen", "toothpaste", "mouthwash", "gel", "liquid", "water bottle", "cream", "deodorant spray", "hairspray", "hair spray"], "carry_on": "warning", "checked": "allowed", "note": "Liquids over 3.4 oz (100 ml) are not allowed in a carry-on. Pack big bottles in your suitcase."},
+        {"keywords": ["aerosol", "spray can"], "carry_on": "warning", "checked": "warning", "note": "Aerosols are limited to 3.4 oz in a carry-on; large cans need to be non-flammable."},
+        {"keywords": ["power bank", "portable charger", "battery pack", "spare battery", "lithium"], "carry_on": "allowed", "checked": "prohibited", "note": "Spare lithium batteries and power banks must go in your carry-on, never your suitcase."},
+        {"keywords": ["vape", "e-cigarette"], "carry_on": "allowed", "checked": "prohibited", "note": "Vapes and e-cigarettes must go in your carry-on, not checked bags."},
+        {"keywords": ["lighter"], "carry_on": "warning", "checked": "warning", "note": "One small lighter is OK in a carry-on. Torch lighters are not allowed."},
+        {"keywords": ["matches"], "carry_on": "warning", "checked": "prohibited", "note": "Safety matches are OK in a carry-on only. Strike-anywhere matches are not allowed."},
+        {"keywords": ["taser", "stun gun"], "carry_on": "prohibited", "checked": "warning", "note": "Stun guns are not allowed in carry-ons. Checked bags only if batteries are removed."},
+        {"keywords": ["drone"], "carry_on": "warning", "checked": "warning", "note": "Drones are allowed, but take the lithium batteries in your carry-on."},
+        {"keywords": ["snow globe"], "carry_on": "warning", "checked": "allowed", "note": "Snow globes are only allowed in carry-ons if small (under 3.4 oz of liquid)."}
     ]
 }
