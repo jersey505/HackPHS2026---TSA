@@ -1,0 +1,7 @@
+{
+    "rules": [
+        {"keywords": ["firework", "flare", "dynamite", "explosive", "grenade"], "carry_on": "prohibited", "checked": "prohibited", "note": "Explosives and fireworks are not allowed in carry-on or checked bags."},
+        {"keywords": ["gun", "pistol", "firearm", "revolver", "rifle"], "carry_on": "prohibited", "checked": "warning", "note": "Firearms are never allowed in carry-ons. Checked bags only if unloaded, locked and declared."},
+        
+    ]
+}
