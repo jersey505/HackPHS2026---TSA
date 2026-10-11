@@ -1,11 +1,11 @@
 // scan page: pick a photo, send it to the ai, review the items it found (warnings first), then add them to the bag
-
 (function () {
 const trip = getTrip(qs("trip")) || listTrips()[0];
 if (!trip) { location.replace("index.html"); return; }
 const tripId = trip.id;
-const bag = qs("bag") === "suitcase" ? "suitcase" : "carry_on";
-const BAG_LABEL = bag === "suitcase" ? "Suitcase" : "Carry-on";
+const keys = bagKeys(trip);
+const bag = keys.includes(qs("bag")) ? qs("bag") : keys[0];
+const BAG_LABEL = bagLabel(trip, bag);
 const backUrl = "bag.html?trip=" + encodeURIComponent(tripId) + "&bag=" + bag;
 renderHeader(document.getElementById("top"), { title: "Scan", subtitle: trip.name + " - " + BAG_LABEL, back: backUrl });  
 
