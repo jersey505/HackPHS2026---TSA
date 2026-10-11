@@ -1,17 +1,18 @@
-app: fly ready
+App: Fly Ready
 
-description
-it uses Gemini to identify items in photos you can upload that also tells you what is not tsa approved. 
+Description:
+Uses Gemini to identify items in your luggage through photos that you can upload or take live, telling you what you can and can't bring based upon TSA guidelines. 
 
-funtinality
-camara function to scan items
-tsa warning
-carry on and suitcase tracking
-missing items in bag detector
+Functionality:
+Camera function to scan items
+Upload function to upload items
+Warnings if any items are prohibited
+Carry on and suitcase tracking
+Mssing items in bag detector
 
-team
-frontend - jeresy
-backend - maxim
-backend ai - jesse
+Team
+Frontend - Jersey Berjamin
+Backend - Maxim Laskovich
+backend ai - Jesse Chen
 
-go to https://hackphs2026-tsa-api.fly.dev/
+For live demo, go to: https://hackphs2026-tsa-api.fly.dev/
