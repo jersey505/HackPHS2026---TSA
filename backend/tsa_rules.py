@@ -12,7 +12,7 @@ RANK = {"allowed": 0, "warning": 1, "prohibited": 2}
 def apply_rules(item):
     """Set item['tsa_status'] / ['tsa_note'] using the rules for the item's bag.
     The stricter of (AI guess, rules list) wins."""
-    bag_key = "checked" if item.get("bag") == "suitcase" else "carry_on"
+    bag_key = "checked" if str(item.get("bag", "")).startswith("suitcase") else "carry_on"
     name = (item.get("name") or "").lower()
     status = item.get("tsa_status") if item.get("tsa_status") in RANK else "allowed"
     note = item.get("tsa_note") or ""
