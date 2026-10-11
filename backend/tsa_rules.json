@@ -1,5 +1,5 @@
 
-#we used ai for this as we dident want to go throuht the prosses of added everything
+//we used ai for this as we dident want to go throuht the prosses of added everything
 {
     "rules": [
         {"keywords": ["firework", "flare", "dynamite", "explosive", "grenade"], "carry_on": "prohibited", "checked": "prohibited", "note": "Explosives and fireworks are not allowed in carry-on or checked bags."},
