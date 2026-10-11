@@ -53,9 +53,15 @@ let selectedFile = null;
 
   // take a photo: phones open their camera app, computers open the webcam in a popup
   camBtn.addEventListener("click", async () => {
-    const isPhone = window.matchMedia("(pointer: coarse)").matches;
-    const canUseWebcam = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-    if (isPhone || !canUseWebcam) { camInput.click(); return; }
+   const isPhone = window.matchMedia("(pointer: coarse) and (hover: none)").matches;
+       const canUseWebcam = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+       if (isPhone) { camInput.click(); return; }
+       if (!canUseWebcam) {
+         // browsers only allow the webcam on https or localhost
+         toast("Webcam needs https or http://127.0.0.1:5000. Opening file picker instead.", "error");
+         camInput.click();
+         return;
+       }
     let stream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
