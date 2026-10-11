@@ -14,4 +14,4 @@ frontend - jeresy
 backend - maxim
 backend ai - jesse
 
-go to http://127.0.0.1:5000/index.html
+go to http://172.16.240.119:5000/index.html
