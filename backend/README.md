@@ -7,7 +7,7 @@ getting started for windows
 2. Install the required packages:
    py -m pip install -r requirements.txt 
 3. Get a free Gemini API key at https://aistudio.google.com/apikey
-4. Copy .env.example and rename the copy to .env Add your API key after GEMINI_API_KEY=
+4. use .env and put in your api key
 5. Start the server:
   py app.py
 6. Open http://127.0.0.1:5000/index.html in your browser
