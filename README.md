@@ -16,6 +16,7 @@ backend ai - jesse
 
 setup
 add ai api key
-1. py -m pip install -r requirements.txt
+1. cd backend
+1.1. py -m pip install -r requirements.txt
 2. py app.py
 3. go to http://127.0.0.1:5000/index.html
