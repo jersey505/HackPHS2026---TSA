@@ -1,6 +1,8 @@
 fly ready backend
 Fly Ready uses Flask and Gemini AI to scan your bags and check items against TSA rules.
 
+**USE THIS TO LIVE DEPLOY:** https://fly-ready.fly.dev/index.html
+
 getting started for windows
 
 1. Make sure you have Python 3.10 or newer installed then apen a terminal in the `backend` folder.
