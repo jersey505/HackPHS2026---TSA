@@ -14,4 +14,4 @@ frontend - jeresy
 backend - maxim
 backend ai - jesse
 
-go to http://172.16.240.119:5000/index.html
+go to https://hackphs2026-tsa-api.fly.dev/
