@@ -1,14 +1,17 @@
+"""Fly Ready backend.  Run:  python app.py   then open http://127.0.0.1:5000"""
 import json
 import os
 import threading
 import uuid
-import gen_ai
-from cables import check_missing
-from tsa_rules import apply_rules
+
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory
 
 load_dotenv()
+
+import gen_ai
+from cables import check_missing
+from tsa_rules import apply_rules
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 FRONTEND = os.path.join(BASE, "..", "frontend")
@@ -19,7 +22,6 @@ app = Flask(__name__, static_folder=None)
 app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD
 _lock = threading.Lock()
 
-#storage, small scale, a single json file
 def load_items():
     try:
         with open(DATA_FILE, encoding="utf-8") as f:
@@ -33,6 +35,7 @@ def save_items_file(items):
         json.dump(items, f, indent=2)
 
 
+# ---------- CORS (so the frontend on port 8000 can call port 5000) ----------
 @app.after_request
 def add_cors(resp):
     resp.headers["Access-Control-Allow-Origin"] = "*"
@@ -50,6 +53,7 @@ def too_big(_e):
     return err("That photo is too large (max 8 MB).", 413)
 
 
+# ---------- routes ----------
 @app.get("/api/health")
 def health():
     return jsonify({"ok": True, "ai_key_set": bool(os.environ.get("GEMINI_API_KEY")),
@@ -67,6 +71,7 @@ def scan():
     if not data:
         return err("That photo is empty.")
     mime = file.mimetype if (file.mimetype or "").startswith("image/") else "image/jpeg"
+
     if os.environ.get("USE_FAKE_AI") == "1":
         found = _fake_scan()
     else:
@@ -75,7 +80,6 @@ def scan():
         except RuntimeError as e:
             return err(str(e), 502)
 
-        
     for it in found:
         it["bag"] = bag
         apply_rules(it)  # TSA rules list override gemini when applicable
@@ -122,6 +126,25 @@ def add_items():
     return jsonify({"items": items})
 
 
+@app.patch("/api/items/<item_id>")
+def update_item(item_id):
+    body = request.get_json(silent=True) or {}
+    try:
+        qty = int(body.get("quantity"))
+    except (TypeError, ValueError):
+        return err("quantity must be a number.")
+    if not 1 <= qty <= 99:
+        return err("quantity must be between 1 and 99.")
+    with _lock:
+        items = load_items()
+        item = next((i for i in items if i["id"] == item_id), None)
+        if not item:
+            return err("Item not found.", 404)
+        item["quantity"] = qty
+        save_items_file(items)
+    return jsonify({"ok": True, "item": item})
+
+
 @app.delete("/api/items/<item_id>")
 def delete_item(item_id):
     with _lock:
@@ -130,10 +153,11 @@ def delete_item(item_id):
         save_items_file(kept)
     return jsonify({"ok": True, "deleted": len(items) - len(kept)})
 
-#serve the frontend
+
 @app.get("/")
 def home():
     return send_from_directory(FRONTEND, "index.html")
+
 
 @app.get("/<path:path>")
 def static_files(path):
@@ -141,7 +165,6 @@ def static_files(path):
         return err("Not found.", 404)
     return send_from_directory(FRONTEND, path)
 
-#fake is used to test other systems while not using gemini tokens 
 _fake_n = 0
 def _fake_scan():
     global _fake_n
@@ -154,7 +177,7 @@ def _fake_scan():
     _fake_n += 1
     return json.loads(json.dumps(sets[(_fake_n - 1) % len(sets)]))
 
+
 if __name__ == "__main__":
     # host 0.0.0.0 and lets other devices connect while on the same wifi
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
-

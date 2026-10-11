@@ -14,8 +14,4 @@ frontend - jeresy
 backend - maxim
 backend ai - jesse
 
-setup
-add ai api key
-1. py -m pip install -r requirements.txt
-2. py app.py
-3. go to http://127.0.0.1:5000/index.html
+go to http://127.0.0.1:5000/index.html
