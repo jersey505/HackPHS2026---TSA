@@ -15,4 +15,4 @@ Frontend - Jersey Berjamin
 Backend - Maxim Laskovich
 backend ai - Jesse Chen
 
-For live demo, go to: https://hackphs2026-tsa-api.fly.dev/
+For live demo, go to: https://fly-ready.fly.dev/index.html
