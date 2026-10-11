@@ -1,4 +1,4 @@
-"""Missing charger / cable detection."""
+#this system detects missing cables
 MESSAGES = {
     "usb_c": "a USB-C cable", "lightning": "a Lightning cable", "micro_usb": "a micro-USB cable",
     "magsafe": "a MagSafe charger", "laptop_brick": "its laptop charger", "proprietary": "its own charger",

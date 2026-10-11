@@ -19,6 +19,7 @@ app = Flask(__name__, static_folder=None)
 app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD
 _lock = threading.Lock()
 
+#storage, small scale, a single json file
 def load_items():
     try:
         with open(DATA_FILE, encoding="utf-8") as f:
@@ -54,7 +55,7 @@ def health():
     return jsonify({"ok": True, "ai_key_set": bool(os.environ.get("GEMINI_API_KEY")),
                     "fake_ai": os.environ.get("USE_FAKE_AI") == "1"})
 
-
+#routes
 @app.post("/api/scan")
 def scan():
     """multipart: image + bag  ->  {detected: [...]}   (nothing is saved yet)"""
@@ -77,7 +78,7 @@ def scan():
         
     for it in found:
         it["bag"] = bag
-        apply_rules(it)  # TSA rules list has the final say
+        apply_rules(it)  # TSA rules list override gemini when applicable
     return jsonify({"detected": found})
 
 
@@ -129,7 +130,7 @@ def delete_item(item_id):
         save_items_file(kept)
     return jsonify({"ok": True, "deleted": len(items) - len(kept)})
 
-
+#serve the frontend
 @app.get("/")
 def home():
     return send_from_directory(FRONTEND, "index.html")
@@ -140,6 +141,7 @@ def static_files(path):
         return err("Not found.", 404)
     return send_from_directory(FRONTEND, path)
 
+#fake is used to test other systems while not using gemini tokens 
 _fake_n = 0
 def _fake_scan():
     global _fake_n
@@ -153,6 +155,6 @@ def _fake_scan():
     return json.loads(json.dumps(sets[(_fake_n - 1) % len(sets)]))
 
 if __name__ == "__main__":
-    # host 0.0.0.0 lets other devices on the same Wi-Fi reach it (use your computer's IP)
+    # host 0.0.0.0 and lets other devices connect while on the same wifi
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)
 

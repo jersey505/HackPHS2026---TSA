@@ -1,6 +1,6 @@
 [
     {
-        
+    "comment": "tiny storage, so that the items persist after restart",
     "name": "Water bottle",
     "category": "other",
     "quantity": 1,
