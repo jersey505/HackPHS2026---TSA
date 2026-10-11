@@ -93,7 +93,7 @@ def list_items():
         items = [i for i in items if i["bag"] == bag]
     return jsonify({"items": items})
 
-
+#I used AI thoughout this method for the logic
 @app.post("/api/items")
 def add_items():
     """JSON {bag, items} -> {items: [ALL items]}. Same name in same bag = quantity goes up."""
@@ -169,7 +169,7 @@ def static_files(path):
         return err("Not found.", 404)
     return send_from_directory(FRONTEND, path)
 
-#fake is used to test other systems while not using gemini tokens 
+#fake is used to test other systems while not using gemini tokens. This was also written by AI 
 _fake_n = 0
 def _fake_scan():
     global _fake_n
