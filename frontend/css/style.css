@@ -256,6 +256,17 @@ dialog.dlg h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; }
   .mascot { width: 52px; }
   .btn { padding: 0 16px; }
 }
+/* tagline under the home title */
+.tagline { text-align: center; font-weight: 800; color: var(--ink-soft); margin: 4px 0 14px; }
+
+/* several bags: odd one out spans the full row, toggle wraps */
+.bag-buttons > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+.toggle { display: flex; flex-wrap: wrap; }
+.toggle button { flex: 1 1 40%; }
+
+/* how many bags number boxes */
+.check-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 700; margin-bottom: 6px; }
+.check-row input { width: 80px; min-height: 44px; padding: 0 10px; border-radius: var(--radius-sm); border: 2px solid var(--sky-300); background: var(--white); color: var(--ink); font: 700 1rem var(--font); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
