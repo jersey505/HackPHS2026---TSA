@@ -10,6 +10,8 @@ const backUrl = "bag.html?trip=" + encodeURIComponent(tripId) + "&bag=" + bag;
 renderHeader(document.getElementById("top"), { title: "Scan", subtitle: trip.name + " - " + BAG_LABEL, back: backUrl });  
 
 const photoInput = document.getElementById("photo");
+const camInput = document.getElementById("photo-cam");
+const camBtn = document.getElementById("cam-btn");
 const preview = document.getElementById("preview");
 const scanBtn = document.getElementById("scan-btn");
 const statusEl = document.getElementById("status");
@@ -37,13 +39,52 @@ let selectedFile = null;
     });
   }
 // choosing a photo: shows a preview and turns on the scan button
-photoInput.addEventListener("change", () => {
-   selectedFile = photoInput.files[0];
-   if (!selectedFile) return;
-   preview.src = URL.createObjectURL(selectedFile);
-   preview.hidden = false;
-   scanBtn.disabled = false;
-   statusEl.textContent = "";
+  // a chosen or captured photo: shows a preview and turns on the scan button
+  function setFile(file) {
+    if (!file) return;
+    selectedFile = file;
+    preview.src = URL.createObjectURL(file);
+    preview.hidden = false;
+    scanBtn.disabled = false;
+    statusEl.textContent = "";
+  }
+  photoInput.addEventListener("change", () => setFile(photoInput.files[0]));
+  camInput.addEventListener("change", () => setFile(camInput.files[0]));
+
+  // take a photo: phones open their camera app, computers open the webcam in a popup
+  camBtn.addEventListener("click", async () => {
+    const isPhone = window.matchMedia("(pointer: coarse)").matches;
+    const canUseWebcam = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+    if (isPhone || !canUseWebcam) { camInput.click(); return; }
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+    } catch (e) {
+      toast("Couldn't open a camera. Use \"Choose a photo\" instead.", "error");
+      return;
+    }
+    const video = el("video", { class: "cam-video", autoplay: true, playsinline: true });
+    video.muted = true;
+    video.srcObject = stream;
+    video.play().catch(() => {});
+    showDialog({
+      title: "Take a photo", body: video,
+      buttons: [
+        { label: "Cancel", kind: "ghost", value: false },
+        {
+          label: "Capture", kind: "primary", value: true,
+          onClick: () => {
+            if (!video.videoWidth) return false;
+            const canvas = document.createElement("canvas");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0);
+            canvas.toBlob((blob) => { if (blob) setFile(new File([blob], "photo.jpg", { type: "image/jpeg" })); }, "image/jpeg", 0.9);
+          },
+        },
+      ],
+      onClose: () => stream.getTracks().forEach((t) => t.stop()),
+    });
   });
   // scan button: sends the photo to the backend and sorts the results with warnings first
 scanBtn.addEventListener("click", async () => {
