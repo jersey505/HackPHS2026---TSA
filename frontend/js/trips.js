@@ -25,9 +25,26 @@ function setDefaultReminders(list) {
 function makeBag(reminders) {
   return { itemIds: [], reminders: reminders.map((t) => ({ id: uid("r"), text: t, done: false })) };
 }
+// bag keys for a trip, e.g. ["carry_on", "carry_on_2", "suitcase"]
+function bagKeys(t) {
+  const keys = [];
+  ["carry_on", "suitcase"].forEach((type) => {
+    for (let n = 1; n <= (t.counts[type] || 0); n++) keys.push(n === 1 ? type : type + "_" + n);
+  });
+  return keys.length ? keys : ["carry_on"];
+}
+// nice name: "Carry-on", or "Carry-on 2" when a trip has several
+function bagLabel(t, key) {
+  const type = key.startsWith("suitcase") ? "suitcase" : "carry_on";
+  const m = key.match(/_(\d)$/);
+  const n = m ? Number(m[1]) : 1;
+  const name = type === "suitcase" ? "Suitcase" : "Carry-on";
+  return t.counts[type] > 1 ? name + " " + n : name;
+}
 function normalizeTrip(t) {
+  t.counts = t.counts || { carry_on: 1, suitcase: 1 };
   t.bags = t.bags || {};
-  ["carry_on", "suitcase"].forEach((b) => {
+  bagKeys(t).forEach((b) => {
     t.bags[b] = t.bags[b] || { itemIds: [], reminders: [] };
     t.bags[b].itemIds = t.bags[b].itemIds || [];
     t.bags[b].reminders = t.bags[b].reminders || [];
@@ -43,8 +60,9 @@ function addTrip(opts) {
   const reminders = opts.reminders || getDefaultReminders();
   const trip = {
     id: uid("trip"), name: (opts.name || "Trip").trim(), date: opts.date || "", bypassed: {},
-    bags: { carry_on: makeBag(reminders), suitcase: makeBag(reminders) },
+    counts: opts.counts || { carry_on: 1, suitcase: 1 }, bags: {},
   };
+  bagKeys(trip).forEach((b) => { trip.bags[b] = makeBag(reminders); });
   const trips = listTrips();
   trips.push(trip);
   saveTrips(trips);
