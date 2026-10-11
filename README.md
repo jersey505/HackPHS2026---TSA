@@ -8,11 +8,11 @@ Camera function to scan items
 Upload function to upload items
 Warnings if any items are prohibited
 Carry on and suitcase tracking
-Mssing items in bag detector
+Missing items in bag detector
 
 Team
 Frontend - Jersey Berjamin
 Backend - Maxim Laskovich
-backend ai - Jesse Chen
+Backend AI - Jesse Chen
 
-For live demo, go to: https://fly-ready.fly.dev/index.html
+**For live demo, go to:** ://fly-ready.fly.dev/index.html
