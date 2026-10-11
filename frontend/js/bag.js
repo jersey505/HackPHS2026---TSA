@@ -4,9 +4,10 @@
   const first = getTrip(qs("trip")) || listTrips()[0];
   if (!first) { location.replace("index.html"); return; }
   const tripId = first.id;
-  let bag = qs("bag") === "suitcase" ? "suitcase" : "carry_on";
   let items = [];
-  const BAG_LABEL = { carry_on: "Carry-on", suitcase: "Suitcase" };
+  const allowed = bagKeys(first);
+  let bag = allowed.includes(qs("bag")) ? qs("bag") : allowed[0];
+  const BAG_LABEL = new Proxy({}, { get: (_, b) => bagLabel(first, b) });
 
   const itemsEl = document.getElementById("items");
   const remEl = document.getElementById("reminders");
@@ -41,7 +42,7 @@
 
   function renderToggle() {
     toggleEl.innerHTML = "";
-    ["carry_on", "suitcase"].forEach((b) => {
+    allowed.forEach((b) => {
       toggleEl.append(el("button", {
         type: "button", class: b === bag ? "active" : "", "aria-pressed": b === bag ? "true" : "false",
         onclick: () => {
@@ -184,12 +185,12 @@
     try {
       const trip = getTrip(tripId);
       const res = await finish();
-      const mine = new Set(trip.bags.carry_on.itemIds.concat(trip.bags.suitcase.itemIds));
+      const mine = new Set(Object.values(trip.bags).flatMap((b) => b.itemIds));
       const missing = (res.missing || []).filter((m) => mine.has(m.item_id));
       const all = await getItems();
       const banned = all.filter((i) => mine.has(i.id) && i.tsa_status === "prohibited");
       const open = [];
-      ["carry_on", "suitcase"].forEach((b) => trip.bags[b].reminders.forEach((r) => {
+      allowed.forEach((b) => trip.bags[b].reminders.forEach((r) => {
         if (!r.done) open.push(BAG_LABEL[b] + ": " + r.text);
       }));
       showResult(missing, banned, open);
