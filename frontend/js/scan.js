@@ -1,11 +1,11 @@
 // scan page: pick a photo, send it to the ai, review the items it found (warnings first), then add them to the bag
-
 (function () {
 const trip = getTrip(qs("trip")) || listTrips()[0];
 if (!trip) { location.replace("index.html"); return; }
 const tripId = trip.id;
-const bag = qs("bag") === "suitcase" ? "suitcase" : "carry_on";
-const BAG_LABEL = bag === "suitcase" ? "Suitcase" : "Carry-on";
+const keys = bagKeys(trip);
+const bag = keys.includes(qs("bag")) ? qs("bag") : keys[0];
+const BAG_LABEL = bagLabel(trip, bag);
 const backUrl = "bag.html?trip=" + encodeURIComponent(tripId) + "&bag=" + bag;
 renderHeader(document.getElementById("top"), { title: "Scan", subtitle: trip.name + " - " + BAG_LABEL, back: backUrl });  
 
@@ -53,9 +53,15 @@ let selectedFile = null;
 
   // take a photo: phones open their camera app, computers open the webcam in a popup
   camBtn.addEventListener("click", async () => {
-    const isPhone = window.matchMedia("(pointer: coarse)").matches;
-    const canUseWebcam = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
-    if (isPhone || !canUseWebcam) { camInput.click(); return; }
+   const isPhone = window.matchMedia("(pointer: coarse) and (hover: none)").matches;
+       const canUseWebcam = navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+       if (isPhone) { camInput.click(); return; }
+       if (!canUseWebcam) {
+         // browsers only allow the webcam on https or localhost
+         toast("Webcam needs https or http://127.0.0.1:5000. Opening file picker instead.", "error");
+         camInput.click();
+         return;
+       }
     let stream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
