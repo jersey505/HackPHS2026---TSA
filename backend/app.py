@@ -2,6 +2,11 @@ import json
 import os
 import threading
 import uuid
+import re
+
+def clean_bag(b):
+    """carry_on, carry_on_2..9, suitcase, suitcase_2..9; anything else becomes carry_on"""
+    return b if isinstance(b, str) and re.fullmatch(r"(carry_on|suitcase)(_[2-9])?", b) else "carry_on"
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request, send_from_directory
@@ -65,7 +70,7 @@ def scan():
     file = request.files.get("image")
     if not file:
         return err("No photo was sent.")
-    bag = "suitcase" if request.form.get("bag") == "suitcase" else "carry_on"
+    bag = clean_bag(request.form.get("bag"))
     data = file.read()
     if not data:
         return err("That photo is empty.")
@@ -89,7 +94,7 @@ def scan():
 def list_items():
     bag = request.args.get("bag")
     items = load_items()
-    if bag in ("carry_on", "suitcase"):
+    if bag and clean_bag(bag) == bag:
         items = [i for i in items if i["bag"] == bag]
     return jsonify({"items": items})
 
@@ -98,7 +103,7 @@ def list_items():
 def add_items():
     """JSON {bag, items} -> {items: [ALL items]}. Same name in same bag = quantity goes up."""
     body = request.get_json(silent=True) or {}
-    bag = "suitcase" if body.get("bag") == "suitcase" else "carry_on"
+    bag = clean_bag(body.get("bag"))
     incoming = body.get("items")
     if not isinstance(incoming, list):
         return err("Expected a list of items.")
