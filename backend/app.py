@@ -22,6 +22,12 @@ app = Flask(__name__, static_folder=None)
 app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD
 _lock = threading.Lock()
 
+<<<<<<< HEAD
+#storage, small scale, a single json file
+=======
+
+# ---------- tiny storage (a JSON file, survives restarts) ----------
+>>>>>>> e3e26d56e29fcf71abb15e5fcbeec6d5b290a41b
 def load_items():
     try:
         with open(DATA_FILE, encoding="utf-8") as f:
@@ -153,7 +159,19 @@ def delete_item(item_id):
         save_items_file(kept)
     return jsonify({"ok": True, "deleted": len(items) - len(kept)})
 
+<<<<<<< HEAD
+#serve the frontend
+=======
 
+@app.post("/api/finish")
+def finish():
+    """Checks BOTH bags for missing chargers/cables."""
+    missing = check_missing(load_items())
+    return jsonify({"ok": not missing, "missing": missing})
+
+
+# ---------- serve the frontend too (open http://127.0.0.1:5000) ----------
+>>>>>>> e3e26d56e29fcf71abb15e5fcbeec6d5b290a41b
 @app.get("/")
 def home():
     return send_from_directory(FRONTEND, "index.html")
@@ -165,6 +183,11 @@ def static_files(path):
         return err("Not found.", 404)
     return send_from_directory(FRONTEND, path)
 
+<<<<<<< HEAD
+#fake is used to test other systems while not using gemini tokens 
+=======
+
+>>>>>>> e3e26d56e29fcf71abb15e5fcbeec6d5b290a41b
 _fake_n = 0
 def _fake_scan():
     global _fake_n
