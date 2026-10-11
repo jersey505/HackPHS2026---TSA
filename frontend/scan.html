@@ -15,8 +15,12 @@
     <main>
       <section class="card photo-box">
       
-        <input type="file" id="photo" class="sr-only" accept="image/*" capture="environment">
-        <label for="photo" class="btn accent wide">Take or choose a photo</label>
+        <input type="file" id="photo" class="sr-only" accept="image/*">
+        <input type="file" id="photo-cam" class="sr-only" accept="image/*" capture="environment">
+        <div class="photo-btns">
+          <button type="button" class="btn accent" id="cam-btn">Take a photo</button>
+          <label for="photo" class="btn ghost" id="choose-label">Choose a photo</label>
+        </div>
         <img id="preview" class="preview" alt="Preview of the photo you picked" hidden>
       </section>
       <button class="btn primary wide" id="scan-btn" type="button" disabled>Scan</button>

@@ -231,7 +231,9 @@ dialog.dlg h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; }
 
 /*scan page */
 .photo-box { text-align: center; }
-#photo:focus-visible + label { outline: 3px solid var(--teal-600); outline-offset: 2px; }
+#photo:focus-visible ~ .photo-btns #choose-label { outline: 3px solid var(--teal-600); outline-offset: 2px; }
+.photo-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cam-video { display: block; width: 100%; max-height: 60vh; border-radius: var(--radius-md); background: #000; }
 .preview { display: block; max-width: 100%; max-height: 260px; margin: 14px auto 0; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
 .hint { color: var(--ink-soft); font-weight: 700; text-align: center; margin: 10px 0; min-height: 1.2em; }
 .spinner { width: 20px; height: 20px; border-radius: 50%; border: 3px solid rgba(255,255,255,.4); border-top-color: var(--white); animation: spin .8s linear infinite; }
@@ -254,6 +256,17 @@ dialog.dlg h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; }
   .mascot { width: 52px; }
   .btn { padding: 0 16px; }
 }
+/* tagline under the home title */
+.tagline { text-align: center; font-weight: 800; color: var(--ink-soft); margin: 4px 0 14px; }
+
+/* several bags: odd one out spans the full row, toggle wraps */
+.bag-buttons > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+.toggle { display: flex; flex-wrap: wrap; }
+.toggle button { flex: 1 1 40%; }
+
+/* how many bags number boxes */
+.check-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 700; margin-bottom: 6px; }
+.check-row input { width: 80px; min-height: 44px; padding: 0 10px; border-radius: var(--radius-sm); border: 2px solid var(--sky-300); background: var(--white); color: var(--ink); font: 700 1rem var(--font); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
