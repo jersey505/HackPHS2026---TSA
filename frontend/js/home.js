@@ -78,8 +78,7 @@ function bagInfo(trip, bag, items) {
           el("p", { class: "trip-date" }, trip.date ? formatDate(trip.date) : "No date set")),
         trash),
       el("div", { class: "bag-buttons" },
-        bagButton(trip, "carry_on", "Carry-on", items),
-        bagButton(trip, "suitcase", "Suitcase", items)));
+        ...bagKeys(trip).map((b) => bagButton(trip, b, bagLabel(trip, b), items))));
   }
   // delete a trip: asks first, then removes the trip and its items from the server
    async function deleteTripFlow(trip) {
@@ -88,7 +87,7 @@ function bagInfo(trip, bag, items) {
     if (!ok) return;
     const gone = deleteTrip(trip.id);
     if (gone) {
-      const ids = gone.bags.carry_on.itemIds.concat(gone.bags.suitcase.itemIds);
+      const ids = Object.values(gone.bags).flatMap((b) => b.itemIds);
       await Promise.allSettled(ids.map((id) => deleteItem(id)));
     }
     toast("Trip deleted", "good");
@@ -118,9 +117,16 @@ function drawReminders() {
       }, icon("plus"), "Add reminder"));
     }
     drawReminders();
+  const carryN = el("input", { type: "number", min: "0", max: "5", value: "1" });
+  const suitN = el("input", { type: "number", min: "0", max: "5", value: "1" });
+  const bagPick = el("div", { class: "field" },
+  el("span", {}, "How many bags?"),
+  el("label", { class: "check-row" }, "Carry-ons ", carryN),
+  el("label", { class: "check-row" }, "Suitcases ", suitN));
  const body = el("div", {},
       el("label", { class: "field" }, el("span", {}, "Trip name"), nameInput),
       el("label", { class: "field" }, el("span", {}, "Date (optional)"), dateInput),
+      bagPick,
       el("p", { class: "field" }, el("span", {}, "Reminders for each bag")),
       list);
 
@@ -134,8 +140,13 @@ function drawReminders() {
             const name = nameInput.value.trim();
             if (!name) { toast("Give your trip a name first.", "error"); nameInput.focus(); return false; }
             const clean = reminders.map((s) => s.trim()).filter(Boolean);
+            const counts = {
+              carry_on: Math.max(0, Math.min(5, parseInt(carryN.value, 10) || 0)),
+              suitcase: Math.max(0, Math.min(5, parseInt(suitN.value, 10) || 0)),
+            };
+            if (counts.carry_on + counts.suitcase < 1) { toast("Pick at least one bag.", "error"); return false; }
             setDefaultReminders(clean); // customizing here changes the defaults for next time too
-            addTrip({ name, date: dateInput.value, reminders: clean });
+            addTrip({ name, date: dateInput.value, reminders: clean, counts });
             toast("Trip created!", "good");
             render();
           },
