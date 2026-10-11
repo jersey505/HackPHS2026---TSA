@@ -15,4 +15,4 @@ Frontend - Jersey Berjamin
 Backend - Maxim Laskovich
 Backend AI - Jesse Chen
 
-**For live demo, go to:** ://fly-ready.fly.dev/index.html
+**For live demo, go to:** https://fly-ready.fly.dev/index.html
