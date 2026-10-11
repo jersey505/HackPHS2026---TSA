@@ -4,7 +4,7 @@ import os
 import re
 
 #change whats inside the brakets to change the modle that the api key uses
-MODEL = "gemini-3.5-flash-lite"
+MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
 #this variable tells the ai what to say after anilizing the image
 PROMPT = """You are helping a traveler pack. Look at the photo and list every distinct travel item you can clearly see.
@@ -71,7 +71,7 @@ def _parse_json(text):
 def identify_items(image_bytes, mime_type="image/jpeg"):
     key = os.environ.get("GEMINI_API_KEY")
     if not key:
-        raise RuntimeError("GEMINI_API_KEY is not set. Put it in backend/.env (see README).")
+         raise RuntimeError("GEMINI_API_KEY is not set. Put it in backend/.env (see README).")
     try:
         from google import genai
         from google.genai import types
@@ -87,6 +87,6 @@ def identify_items(image_bytes, mime_type="image/jpeg"):
         return _clean(_parse_json(resp.text))
     except Exception as e:  # network, quota, bad key...
         print("GEMINI ERROR:", repr(e))
-        raise RuntimeError(f"The AI could not read that photo ({type(e).__name__}). Try again.")
+        raise RuntimeError(f"The AI could not read that photo ({type(e).__name__}: {str(e)[:150]})")
 
   
